@@ -1,0 +1,7 @@
+192.0.2.1 FB-DEMO (2026-10-11T10:15:30) firewall: msg_id="3E00-0002" Management user admin from 198.51.100.20 logged in
+192.0.2.1 FB-DEMO (2026-10-11T10:16:10) firewall: msg_id="3E00-0003" Management user admin from 198.51.100.20 log in attempt was rejected
+192.0.2.1 FB-DEMO (2026-10-11T10:20:00) iked: msg_id="1100-0005" Authentication of IKEv2 user [vpnuser1] from 198.51.100.30 was rejected
+192.0.2.1 FB-DEMO (2026-10-11T10:21:00) iked: msg_id="1100-0004" Authentication of IKEv2 user [vpnuser1] from 198.51.100.30 was accepted
+192.0.2.1 FB-DEMO (2026-10-11T10:25:00) firewall: msg_id="3E00-0010" Management user admin from 198.51.100.20 added Alias demo_alias
+192.0.2.1 FB-DEMO (2026-10-11T10:30:00) firewall: msg_id="3000-0148" Allow 1-Trusted 0-External 60 tcp 20 128 198.51.100.40 203.0.113.50 51234 443 geo_src="IND" geo_dst="USA"
+192.0.2.1 FB-DEMO (2026-10-11T10:35:00) firewall: msg_id="3000-0173" fqdn_dst_match="blocked.example.com" Deny 1-Trusted 0-External 60 tcp 20 128 198.51.100.40 203.0.113.60 51300 443 geo_src="IND" geo_dst="USA"
