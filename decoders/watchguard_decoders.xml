@@ -24,7 +24,7 @@
 <!-- IKEv2 / Admin authentication rejected -->
 <decoder name="watchguard-ikev2-login-fail">
   <prematch>was rejected</prematch>
-  <regex type="pcre2">^(\S+) (\S+) \(\S+\) \S+: msg_id="\S+" Authentication of (?:IKEv2|Admin) user \[(\S+)\] from (\S+) was rejected</regex>
+  <regex type="pcre2">^(\S+) (\S+) \(\S+\) \S+: msg_id="\S+" Authentication of IKEv2 user \[(\S+)\] from (\S+) was rejected</regex>
   <order>firewall_ip,firewall_name,dstuser,srcip</order>
 </decoder>
 
