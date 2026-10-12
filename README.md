@@ -10,7 +10,7 @@ blocked-site events.
 | watchguard-mgmt-login | Management login success |
 | watchguard-wsm-login-fail | WSM login rejected |
 | watchguard-vpn-login | Mobile VPN login |
-| watchguard-ikev2-login / -fail | IKEv2/Admin auth accepted/rejected |
+| watchguard-ikev2-login / -fail | IKEv2 auth accepted/rejected |
 | watchguard-alias-* / policy-* | Alias/Policy added, deleted, modified |
 | watchguard-traffic-0148 / 0151 | Traffic logs with GeoIP |
 | watchguard-blocked-site | Blocked site (msg_id 3000-0173) |
@@ -24,12 +24,11 @@ Paste a line from `samples/sample.log` into:
 `/var/ossec/bin/wazuh-logtest`
 
 ## Lessons learned
-- A decoder can match via `prematch` but still capture nothing if the
-  regex is too specific. My IKEv2 fail decoder had "IKEv2 user"
-  hardcoded and silently missed "Admin user" logs.
-- Test with `wazuh-logtest` after every change, not only the prematch.
-- Remove dead decoders: I deleted a legacy "Blocked site" decoder after
-  `grep` showed the firewall no longer emits that format.
+- A decoder can match via `prematch` but still extract nothing if the
+  regex is too specific. `wazuh-logtest` showed the IKEv2 fail decoder
+  matching "Authentication of Admin user" logs with zero fields
+  extracted and a blank alert description. Lesson: always check Phase 2
+  fields, not just the decoder name.
 
 ## Note
 All sample data is synthetic (RFC 5737 documentation IPs).
