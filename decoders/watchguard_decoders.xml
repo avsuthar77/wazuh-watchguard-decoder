@@ -1,0 +1,93 @@
+<!-- WatchGuard Firebox decoders for Wazuh. Tested on Wazuh 4.x -->
+
+<!-- Management login (msg_id 3E00-0002) -->
+<decoder name="watchguard-mgmt-login">
+  <prematch>msg_id="3E00-0002" Management user</prematch>
+  <regex>^(\S+) (\S+) \(\S+\) \S+: msg_id="3E00-0002" Management user (\S+) from (\S+) logged in</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip</order>
+</decoder>
+
+<!-- WSM login rejected -->
+<decoder name="watchguard-wsm-login-fail">
+  <prematch>log in attempt was rejected</prematch>
+  <regex>^\s*(\S+) (\S+) \(\S+\) \S+: msg_id="\S+" \S+ \S+ (\S+) from (\S+) log in attempt was rejected</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip</order>
+</decoder>
+
+<!-- Mobile VPN login -->
+<decoder name="watchguard-vpn-login">
+  <prematch>VPN user</prematch>
+  <regex>^\s*(\S+) (\S+) \(\S+\) \S+: msg_id="\S+" \S+ VPN user (\S+) from (\S+) logged in assigned virtual IP is (\S+)</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip,dstip</order>
+</decoder>
+
+<!-- IKEv2 / Admin authentication rejected -->
+<decoder name="watchguard-ikev2-login-fail">
+  <prematch>was rejected</prematch>
+  <regex type="pcre2">^(\S+) (\S+) \(\S+\) \S+: msg_id="\S+" Authentication of (?:IKEv2|Admin) user \[(\S+)\] from (\S+) was rejected</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip</order>
+</decoder>
+
+<!-- IKEv2 authentication accepted -->
+<decoder name="watchguard-ikev2-login">
+  <prematch>Authentication of IKEv2 user </prematch>
+  <regex type="pcre2">^(\S+) (\S+) \(\S+\) \S+: msg_id="\S+" Authentication of IKEv2 user \[(\S+)\] from (\S+) was accepted</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip</order>
+</decoder>
+
+<!-- Config change: Alias / Policy added, deleted, modified -->
+<decoder name="watchguard-alias-added">
+  <prematch> added Alias </prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+\S+:\s+\S+\s+Management user\s+(\S+)\s+from\s+(\S+)\s+added Alias\s+(\S+)</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip,alias_name</order>
+</decoder>
+
+<decoder name="watchguard-policy-added">
+  <prematch> added Policy </prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+\S+:\s+\S+\s+Management user\s+(\S+)\s+from\s+(\S+)\s+added Policy\s+(\S+)</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip,policy_name</order>
+</decoder>
+
+<decoder name="watchguard-alias-deleted">
+  <prematch> deleted Alias </prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+\S+:\s+\S+\s+Management user\s+(\S+)\s+from\s+(\S+)\s+deleted Alias\s+(\S+)</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip,alias_name</order>
+</decoder>
+
+<decoder name="watchguard-policy-deleted">
+  <prematch> deleted Policy </prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+\S+:\s+\S+\s+Management user\s+(\S+)\s+from\s+(\S+)\s+deleted Policy\s+(\S+)</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip,policy_name</order>
+</decoder>
+
+<decoder name="watchguard-alias-modified">
+  <prematch> modified Alias </prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+\S+:\s+\S+\s+Management user\s+(\S+)\s+from\s+(\S+)\s+modified Alias\s+(\S+)</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip,alias_name</order>
+</decoder>
+
+<decoder name="watchguard-policy-modified">
+  <prematch> modified Policy </prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+\S+:\s+\S+\s+Management user\s+(\S+)\s+from\s+(\S+)\s+modified Policy\s+(\S+)</regex>
+  <order>firewall_ip,firewall_name,dstuser,srcip,policy_name</order>
+</decoder>
+
+<!-- Traffic logs (3000-0148, 3000-0151) with optional FQDN and GeoIP -->
+<decoder name="watchguard-traffic-0148">
+  <prematch>firewall: msg_id="3000-0148"</prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+firewall:\s+msg_id="3000-0148"\s+(?:fqdn_dst_match="[^"]*"\s+)?(\w+)\s+(\S+)\s+(\S+)\s+\d+\s+\w+\s+\d+\s+\d+\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+\.\d+\.\d+\.\d+)(?:.*?geo_src="([A-Z]{3})")?(?:.*?geo_dst="([A-Z]{3})")?</regex>
+  <order>firewall_ip,firewall_name,action,src_interface,dst_interface,srcip,dstip,geo_src,geo_dst</order>
+</decoder>
+
+<decoder name="watchguard-traffic-0151">
+  <prematch>firewall: msg_id="3000-0151"</prematch>
+  <regex type="pcre2">^(\S+)\s+(\S+)\s+\S+\s+firewall:\s+msg_id="3000-0151"\s+(?:fqdn_dst_match="[^"]*"\s+)?(\w+)\s+(\S+)\s+(\S+)\s+\w+\s+(\d+\.\d+\.\d+\.\d+)\s+(\d+\.\d+\.\d+\.\d+)(?:.*?geo_src="([A-Z]{3})")?(?:.*?geo_dst="([A-Z]{3})")?</regex>
+  <order>firewall_ip,firewall_name,action,src_interface,dst_interface,srcip,dstip,geo_src,geo_dst</order>
+</decoder>
+
+<!-- Blocked site (3000-0173) -->
+<decoder name="watchguard-blocked-site">
+  <prematch>firewall: msg_id="3000-0173"</prematch>
+  <regex type="pcre2">^(\S+) ([^ (]+) .* msg_id="3000-0173" (?:fqdn_dst_match="([^ "]+)" )?(\S+) (\S+) (\S+) \S+ (\S+) \S+ \S+ (\S+) (\S+)(?:.*?geo_src="([A-Z]{3})")?(?:.*?geo_dst="([A-Z]{3})")?</regex>
+  <order>firewall_ip,firewall_name,fqdn_blocked,action,src_interface,dst_interface,protocol,srcip,dstip,geo_src,geo_dst</order>
+</decoder>
