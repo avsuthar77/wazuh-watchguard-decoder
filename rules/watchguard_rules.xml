@@ -1,0 +1,56 @@
+<!-- WatchGuard Firebox rules for Wazuh. Pair with decoders/watchguard_decoders.xml -->
+<group name="watchguard,">
+
+  <!-- Authentication -->
+  <rule id="114502" level="12">
+    <decoded_as>watchguard-mgmt-login</decoded_as>
+    <description>WatchGuard Firewall ($(hostname)): Management user '$(dstuser)' logged in from $(srcip)</description>
+    <group>authentication_success,pci_dss_10.2.5,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3</group>
+  </rule>
+
+  <rule id="114503" level="12">
+    <decoded_as>watchguard-vpn-login</decoded_as>
+    <description>WatchGuard Firewall ($(hostname)): VPN user '$(dstuser)' logged in from $(srcip), assigned IP $(dstip)</description>
+    <group>vpn,authentication_success,pci_dss_10.2.5,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3</group>
+  </rule>
+
+  <rule id="114504" level="12">
+    <decoded_as>watchguard-wsm-login-fail</decoded_as>
+    <description>WatchGuard Firewall: WSM user '$(dstuser)' login failed from $(srcip) - invalid credentials</description>
+    <group>authentication_fail,pci_dss_10.2.4,gpg13_4.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.1,tsc_CC6.8</group>
+  </rule>
+
+  <rule id="114505" level="12">
+    <decoded_as>watchguard-ikev2-login-fail</decoded_as>
+    <description>WatchGuard Firewall: IKEv2 VPN user '$(dstuser)' authentication failed from $(srcip)</description>
+    <group>authentication_fail,vpn,pci_dss_10.2.4,gpg13_4.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.1,tsc_CC6.8</group>
+  </rule>
+
+  <!-- Traffic (level 0: parsed, no alert) -->
+  <rule id="114506" level="0">
+    <decoded_as>watchguard-traffic-0148</decoded_as>
+    <description>WatchGuard ($(firewall_name)): Traffic log 3000-0148</description>
+  </rule>
+
+  <rule id="114507" level="0">
+    <decoded_as>watchguard-traffic-0151</decoded_as>
+    <description>WatchGuard ($(firewall_name)): Traffic log 3000-0151</description>
+  </rule>
+
+  <!-- Blocked site -->
+  <rule id="114517" level="8">
+    <decoded_as>watchguard-blocked-site</decoded_as>
+    <description>WatchGuard ($(firewall_name)): Blocked site access from $(srcip) to $(dstip) [$(fqdn_blocked)]</description>
+    <mitre><id>T1071</id></mitre>
+    <group>blocked_site,web_filtering,</group>
+  </rule>
+
+  <!-- Configuration change -->
+  <rule id="114523" level="12">
+    <decoded_as>watchguard-alias-added</decoded_as>
+    <field name="alias_name">\.+</field>
+    <description>WatchGuard ($(firewall_name)): Alias "$(alias_name)" added by $(dstuser) from $(srcip)</description>
+    <group>configuration_changed,pci_dss_10.2.7,</group>
+  </rule>
+
+</group>
