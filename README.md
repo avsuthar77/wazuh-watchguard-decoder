@@ -19,6 +19,28 @@ blocked-site events.
 1. Copy `decoders/watchguard_decoders.xml` to `/var/ossec/etc/decoders/`
 2. `systemctl restart wazuh-manager`
 
+## Rules
+Copy `rules/watchguard_rules.xml` to `/var/ossec/etc/rules/` and restart
+`wazuh-manager`.
+
+| Rule ID | Level | Detects | MITRE |
+|---|---|---|---|
+| 114502 | 12 | Management login success | |
+| 114503 | 12 | Mobile VPN login success | |
+| 114504 | 12 | WSM login failure | |
+| 114505 | 12 | IKEv2 authentication failure | |
+| 114506 / 114507 | 0 | Traffic logs (parsed, no alert) | |
+| 114517 | 8 | Blocked site access | T1071 |
+| 114523 | 12 | Alias added | |
+
+Verified with `wazuh-logtest`: 114502, 114504, 114505, 114506, 114517,
+114523. Not yet verified: 114503, 114507.
+
+## Known gaps
+- No rule for successful IKEv2 login (decoder exists, no alert fires).
+- No rules yet for policy/alias deleted or modified events.
+- No MITRE mapping on auth rules yet.
+
 ## Test
 Paste a line from `samples/sample.log` into:
 `/var/ossec/bin/wazuh-logtest`
